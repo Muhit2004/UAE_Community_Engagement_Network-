@@ -1,0 +1,63 @@
+# Library Usage Report for UAEConnect Project
+
+This document outlines the key methods and classes used from external libraries in this project.
+
+---
+### 1. JGraphT (`org.jgrapht`)
+**Purpose:** Core library for creating and managing the graph data structure.
+
+| Class/Method | Where It's Used | What It Does & How |
+| :--- | :--- | :--- |
+| `Graph` | `JGraphTGraphManager_sec33_gr3`, `CommunityNetwork_sec33_gr3`, all `AnalysisStrategy` classes | The main interface representing the network graph. |
+| `new Pseudograph(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Creates a new graph instance. **Why:** A `Pseudograph` is chosen specifically because it supports both multiple edges between two nodes (for different projects) and self-loops. |
+| `graph.addVertex(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Adds a `Contributor_sec33_gr3` object as a new node (vertex) to the graph. |
+| `graph.addEdge(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Adds a `Collaboration_sec33_gr3` object as a new connection (edge) between two contributor nodes. |
+| `graph.removeVertex(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Removes a contributor node and all of its associated collaboration edges from the graph. |
+| `graph.removeEdge(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Removes a specific collaboration edge from the graph. |
+| `graph.containsVertex(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Checks if a contributor already exists in the graph to prevent duplicates. |
+| `graph.degreeOf(...)` | `DegreeCentralityStrategy_sec33_gr3`, `NetworkVisualizer_sec33_gr3` | **How:** Returns the total number of collaborations (edges) connected to a contributor. Used for ranking and sizing nodes in the visualizer. |
+| `graph.vertexSet()` | Throughout the project | **How:** Returns a `Set` of all contributor nodes in the graph. Used for iterating over all contributors. |
+| `graph.edgeSet()` | Throughout the project | **How:** Returns a `Set` of all collaboration edges in the graph. Used for iterating over all collaborations. |
+| `graph.getAllEdges(...)` | `JGraphTGraphManager_sec33_gr3` | **How:** Retrieves all collaboration edges between two specific contributors. Used when removing a collaboration for a specific project. |
+| `BetweennessCentrality` | `InfluenceAnalysisStrategy_sec33_gr3` | **How:** Calculates the "bridge" score for each contributor. It measures how often a node lies on the shortest path between other nodes. |
+| `EigenvectorCentrality` | `InfluenceAnalysisStrategy_sec33_gr3` | **How:** Calculates the "influence" score of a contributor based on the importance of its neighbors. |
+| `ConnectivityInspector` | `ClusterDetectionStrategy_sec33_gr3`, `ConnectivityAnalysisStrategy_sec33_gr3` | **How:** Determines if the graph is fully connected and identifies all separate, disconnected groups (connected sets). |
+| `DijkstraShortestPath` | `PathfindingStrategy_sec33_gr3` | **How:** Implements Dijkstra's algorithm to find the shortest sequence of collaborations between two contributors. |
+
+---
+### 2. Google Gson (`com.google.code.gson`)
+**Purpose:** For converting Java objects to and from JSON format.
+
+| Class/Method | Where It's Used | What It Does & How |
+| :--- | :--- | :--- |
+| `new Gson()` | `CommunityNetwork_sec33_gr3` | **How:** Creates the main Gson object used for serialization and deserialization. |
+| `gson.fromJson(...)` | `CommunityNetwork_sec33_gr3` | **How:** Reads the `contributors.json` and `projects.json` files and automatically converts the JSON data into a `List` of `Contributor_sec33_gr3` and `Project_sec33_gr3` Java objects. |
+| `new TypeToken<...>(){}` | `CommunityNetwork_sec33_gr3` | **How:** A helper class used with Gson to correctly handle the conversion of JSON arrays into generic Java lists (e.g., `List<Project_sec33_gr3>`). |
+
+---
+### 3. JUnit 5 (`org.junit.jupiter`)
+**Purpose:** For writing and running automated tests.
+
+| Class/Method | Where It's Used | What It Does & How |
+| :--- | :--- | :--- |
+| `@Test` | `CommunityNetworkTest_sec33_gr3` | **How:** Marks a method as a test case that the JUnit test runner should execute. |
+| `@BeforeEach` | `CommunityNetworkTest_sec33_gr3` | **How:** Marks a method (`setUp()`) that should be run before each individual `@Test` method to ensure a clean state. |
+| `Assertions.assertTrue(...)` | `CommunityNetworkTest_sec33_gr3` | **How:** A static method used to verify that a certain condition is true. The test fails if it's false. |
+| `Assertions.assertEquals(...)`| `CommunityNetworkTest_sec33_gr3` | **How:** A static method used to verify that an expected value matches an actual value. The test fails if they don't match. |
+
+---
+### 4. GraphStream (`org.graphstream`)
+**Purpose:** For creating the interactive, graphical visualization of the network.
+
+| Class/Method | Where It's Used | What It Does & How |
+| :--- | :--- | :--- |
+| `Graph` | `NetworkVisualizer_sec33_gr3` | The main interface for the visual graph from the GraphStream library. |
+| `new SingleGraph(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Creates a new, empty visual graph instance to be displayed. |
+| `graph.setStrict(false)` | `NetworkVisualizer_sec33_gr3` | **How:** Configures the visual graph to allow multiple edges between nodes, matching the behavior of your JGraphT `Pseudograph`. |
+| `graph.addNode(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Adds a visual node to the GraphStream graph for each contributor. |
+| `graph.addEdge(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Adds a visual edge (a line) to the GraphStream graph for each collaboration. |
+| `node.setAttribute(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Sets properties on a visual node, such as its label (`ui.label`), class for styling (`ui.class`), and size (`ui.size`). |
+| `graph.setAttribute(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Applies a global CSS-like stylesheet to the entire visual graph to control colors, sizes, and text. |
+| `graph.display()` | `NetworkVisualizer_sec33_gr3` | **How:** The final command that opens the Swing window and renders the interactive graph visualization. |
+| `System.setProperty(...)` | `NetworkVisualizer_sec33_gr3` | **How:** Configures GraphStream to use the `swing` UI backend for displaying the graph. |
+
